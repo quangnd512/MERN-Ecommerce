@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt'); //hash password
+const bcrypt = require('bcrypt'); //hash password  
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
+        unique: true,
         index: true,
         lowercase: true
     },
@@ -32,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     hash_password: {
         type: String,
-        required: true
+        required: true,
     },
     role: {
         type: String,
@@ -43,14 +44,18 @@ const userSchema = new mongoose.Schema({
     pofilePicture: { type: String }
 }, { timestamps: true });
 
-userSchema.virtual('password')
-    .set(function(password) {
-        this.hash_password = bcrypt.hashSync(password, 10);
+userSchema.virtual('password').set(function(password) {
+    this.hash_password = bcrypt.hashSync(password, 10);
+});
+
+userSchema.virtual('fullName')
+    .get(function() {
+        return `${this.firstName} ${this.lastName}`;
     });
 
-userSchema.method = {
+userSchema.methods = {
     authenticate: function(password) {
-        return bcrypt.compare(password, this.hash_password);
+        return bcrypt.compareSync(password, this.hash_password);
     }
 }
 
