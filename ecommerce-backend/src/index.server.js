@@ -1,7 +1,6 @@
 const express = require('express');
 const env = require('dotenv');
 const app = express();
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 // Routers user
@@ -22,7 +21,7 @@ mongoose.connect(
     console.log('DB connect');
 });
 
-app.use(bodyParser());
+app.use(express.json());
 
 // use userRouter
 app.use('/api', authRouters);
